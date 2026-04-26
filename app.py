@@ -68,15 +68,16 @@ def get_playlist(storefront: str, playlist_id: str) -> tuple:
 
 
 def format_tracklist(playlist_name: str, tracks: list) -> str:
-    lines = []
-    lines.append(f'Playlist : "{playlist_name}"')
-    lines.append(f"Tracks   : {len(tracks)}\n")
-    lines.append(f"{'#':<5} {'Song':<50} {'Main Artist'}")
-    lines.append("-" * 80)
-    for i, t in enumerate(tracks, 1):
-        song = t["name"][:48] + ".." if len(t["name"]) > 50 else t["name"]
-        lines.append(f"{i:<5} {song:<50} {t['artist']}")
-    return "\n".join(lines)
+    parts = []
+    for t in tracks:
+        song = t["name"]
+        artist = t["artist"]
+        # Remove parenthetical features e.g. "(feat. X)"
+        artist = re.sub(r'\s*\(.*?\)', '', artist).strip()
+        # Take only the first artist before feat./ft./&/,/x
+        artist = re.split(r'\s*(?:feat\.|ft\.|&|,| x )\s*', artist, flags=re.IGNORECASE)[0].strip()
+        parts.append(f"{song} {artist}")
+    return " || ".join(parts)
 
 
 @app.route("/playlist", methods=["GET", "POST"])
@@ -110,9 +111,6 @@ def playlist():
     text = format_tracklist(playlist_name, tracks)
 
     return jsonify({
-        "playlist": playlist_name,
-        "track_count": len(tracks),
-        "tracks": tracks,
         "text": text
     })
 
