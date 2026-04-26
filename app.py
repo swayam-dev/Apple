@@ -111,6 +111,7 @@ def playlist():
     text = format_tracklist(playlist_name, tracks)
 
     return jsonify({
+        "playlist": playlist_name,
         "text": text
     })
 
