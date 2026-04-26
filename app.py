@@ -8,6 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 TOKEN = os.environ.get("APPLE_MUSIC_TOKEN", "")
+TOKEN = "Bearer " + TOKEN
 
 
 def get_headers():
