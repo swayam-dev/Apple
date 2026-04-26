@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: apple-music-playlist-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: APPLE_MUSIC_TOKEN
+        sync: false   # you'll paste this in the Render dashboard
